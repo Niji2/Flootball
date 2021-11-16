@@ -49,8 +49,8 @@ Character = CharCreate()
 def TeamCreate():
     i2={"QB": {1:CharCreate()},
         "WR":{1:CharCreate(), 2:CharCreate(), 3:CharCreate()},
-        "RB/TE":{1:CharCreate(), 2:CharCreate(), 3:CharCreate(), 4:CharCreate(), 5:CharCreate(), 6:CharCreate()},
-        "LB/Safety":{1:CharCreate(), 2:CharCreate(), 3:CharCreate(), 4:CharCreate(), 5:CharCreate(), 6:CharCreate(), 7:CharCreate(), 8:CharCreate(), 9:CharCreate()}}
+        "RB":{1:CharCreate(), 2:CharCreate(), 3:CharCreate(), 4:CharCreate(), 5:CharCreate(), 6:CharCreate()},
+        "DEF":{1:CharCreate(), 2:CharCreate(), 3:CharCreate(), 4:CharCreate(), 5:CharCreate(), 6:CharCreate(), 7:CharCreate(), 8:CharCreate(), 9:CharCreate()}}
     return i2
 teams = {
         "Orono Juicers": TeamCreate(),

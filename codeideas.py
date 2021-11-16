@@ -76,34 +76,34 @@ def UpdateGameState(teams, owner, theif, score, fspot, downs, yrdsToFirst):
     if(type.downs == int ):
         if(downs == 4 & random.randint(0,4) > 1):
             if(fspot > 51):
-                FGBall()
+                FGBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             else:
-                PuntBall()
+                PuntBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
         else:
             if(random.randint(0,1) == 0):
-                ThrowBall()
+                ThrowBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             else:
-                RunBall()
+                RunBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
     else:
         if(fspot[1] == "M"):
             if(random.randomint(0,1) == 0):
-                PassBall()
+                PassBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             else:
-                DribbleBall()
+                DribbleBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
         elif(fspot[2] == "M"):
             i = random.randomint(0,100)
             if(i > 90):
-                ShootGoal()
+                ShootGoal(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             elif(i > 45):
-                PassBall()
+                PassBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             else:
-                DribbleBall()
+                DribbleBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
         else:
             i = random.randomint(0,50)
             if(i > 25):
-                ShootGoal()
+                ShootGoal(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             else:
-                PassBall()
+                PassBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             
         
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
@@ -118,16 +118,20 @@ def RotatePlayers(team, position, player):
         i = i + 1
     teamf[position][i] = end
     return teamf
-def ThrowBall():
-    return no
+def ThrowBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    QB = owner["QB"][1]
+    LB = theif["DEF"][1]
+    WR = owner["WR"][1]
 
-def RunBall():
-    return no
+    return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
-def PuntBall():
-    return no
-def FGBall():
-    return no
+def RunBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    return teams, owner, theif, score, fspot, downs, yrdsToFirst
+
+def PuntBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    return teams, owner, theif, score, fspot, downs, yrdsToFirst
+def FGBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
 # alright, it's time to write down the soccer positions in here.
 #    AG   AM   MM   HM   HG
@@ -136,16 +140,21 @@ def FGBall():
 # L  LAG  LAM  LMM  LHM  LHG
 # These are the 15 true states of sloccer. use these as you will
 # the ball can only move from the position its in the one of the surrounding positions normally. Goals can be kicked from that sides xM or xG positions, with a penalty 
-#if from the xM position, and also if not kicked from MxM/G
+# if from the xM position, and also if not kicked from MxM/G
 # so the flow chart needs to check position, realize where it is, then realize whats around it.
 # Passes can go any direction, dribbles can only go forward or diagnaly forward.
+# Positions: 
+# QB = Goalie
+# WR = attackers (xM/xG)
+# RB/TE = mid  (xM/MM/xM)
+# Saftey/LB = defenders (xM/xG)
 
-def PassBall():
-    return no
-def DribbleBall():
-    return no
-def ShootGoal():
-    return no
+def PassBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    return teams, owner, theif, score, fspot, downs, yrdsToFirst
+def DribbleBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    return teams, owner, theif, score, fspot, downs, yrdsToFirst
+def ShootGoal(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
 
 def ChangeGame(downs, fspot, teams, owner):
