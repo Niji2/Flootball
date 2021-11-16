@@ -118,10 +118,13 @@ def RotatePlayers(team, position, player):
         i = i + 1
     teamf[position][i] = end
     return teamf
+
+
 def ThrowBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
     QB = owner["QB"][1]
     LB = theif["DEF"][1]
     WR = owner["WR"][1]
+
 
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
