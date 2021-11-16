@@ -56,7 +56,7 @@ teams = {
         "Orono Juicers": TeamCreate(),
         "Blue Badgers": TeamCreate()
     }
-print(json.dumps(teams,indent=2))
+#print(json.dumps(teams,indent=2))
 
 with open("teams.json","w") as make_teams:
     json.dump(teams, make_teams)

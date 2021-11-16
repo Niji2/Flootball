@@ -109,6 +109,15 @@ def UpdateGameState(teams, owner, theif, score, fspot, downs, yrdsToFirst):
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
 
+def RotatePlayers(team, position, player):
+    end = player
+    teamf = team
+    i = 0
+    for key in list(team[position]):
+        teamf[position][key - 1] = team[position][key]
+        i = i + 1
+    teamf[position][i] = end
+    return teamf
 def ThrowBall():
     return no
 
