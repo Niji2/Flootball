@@ -5,6 +5,17 @@ import os.path
 import random
 from types import CodeType, GeneratorType
 
+#seed for the RNG
+s1, s2, s3 = 169, 420, 808
+
+#RNG, not sure how it works. Will be called many times so I’m happy with how it works. Is predictable if someone figures it out however.
+def RNG():
+    global s1, s2, s3
+    s1 = (171 * s1) %  30269
+    s2 = (171 * s2) %  30307
+    s3 = (171 * s3) %  30323
+    return (s1/30269 + s2/30307 + s3/30323) % 1.0 
+
 #Starting point for each game, with starting style randomly decided
 baseGame = {
     "teams": {1:None, 2:None},
@@ -122,13 +133,63 @@ def RotatePlayers(team, position, player):
 
 def ThrowBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
     QB = owner["QB"][1]
-    LB = theif["DEF"][1]
+    hLB = owner["DEF"][1]
+    dLB = theif["DEF"][1]
+    dSAF = theif["DEF"][2]
     WR = owner["WR"][1]
+    yards = SackCheck(QB, hLB, dLB)
+    if(yards == 0):
+        resu = ThrowCheck(QB, WR, dSAF)
+        if(resu == 0):
+            yards = random.randint(1,30)
+            yrdsToFirst = yrdsToFirst - yards
+            if(yrdsToFirst <= 0):
+                downs = 1
+            else:
+                downs = downs + 1
+                if(downs > 4):
+                    owner, theif, fspot, downs, yrdsToFirst = ChangeSide(owner, theif, fspot, downs, yrdsToFirst)
+        elif(resu == 1):
+            downs = downs + 1
+            if(downs > 4):
+                owner, theif, fspot, downs, yrdsToFirst = ChangeSide(owner, theif, fspot, downs, yrdsToFirst)
+        else:
+            owner, theif, fspot, downs, yrdsToFirst = ChangeSide(owner, theif, fspot, downs, yrdsToFirst)
+    else:
+        fspot = fspot - yards
+        yrdsToFirst = yrdsToFirst + yards
 
-
+    owner = RotatePlayers(owner, "QB", QB)
+    theif = RotatePlayers(theif, "DEF", dLB)
+    theif = RotatePlayers(theif, "DEF", dSAF)
+    owner = RotatePlayers(owner, "DEF", hLB)
+    owner = RotatePlayers(owner, "WR", WR)
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
 def RunBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
+    QB = owner["QB"][1]
+    hLB = owner["DEF"][1]
+    dLB = theif["DEF"][1]
+    dSAF = theif["DEF"][2]
+    RB = owner["RB"][1]
+    yards = SackCheck(QB, hLB, dLB)
+    if(yards == 0):
+        yards = RunCheck(RB, dLB)
+        fspot = fspot + yards
+        yrdsToFirst = yrdsToFirst - yards
+    else:
+        fspot = fspot - yards
+        yrdsToFirst = yrdsToFirst + yards
+    
+    if(yrdsToFirst <= 0):
+        downs = 0
+    else:
+        if(downs > 4):
+            owner, theif, fspot, downs, yrdsToFirst = ChangeSide(owner, theif, fspot, downs, yrdsToFirst)
+        else:
+            downs = downs + 1
+    
+
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
 def PuntBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
@@ -136,6 +197,140 @@ def PuntBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
 def FGBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
+def ChangeSide(owner, theif, fspot, downs, yrdsToFirst):
+    downs = 1
+    fspot = 100 - fspot
+    yrdsToFirst = 10
+    temp1 = owner
+    temp2 = theif
+    owner = temp2
+    theif = temp1
+    return owner, theif, fspot, downs, yrdsToFirst
+    
+
+
+
+
+# check designs.
+# I want RNG to be invovled, but mostly be based on player stats.
+# Total of OFF stats - DEF stats, rng has to roll below to succeed?
+# might work.
+# time to test
+
+# I FIGURED IT OUT
+# THE STATS ARE RANDOMLY USED
+# HOLY SHIT
+# IF THEY ARE RANDOM
+# NO ONE WILL BE ABLE TO FIGURE IT OUT
+# YES
+# I AM AMAZING
+
+#outputs 0 = not sacked other = how many yards sacked for.
+def SackCheck(qb, hDEF, aDEF):
+    # gotta love these temp variables.
+    #these are all random. they mean nothing. pain.
+    a = random.randint(1,9)
+    b = random.randint(1,9)
+    c = random.randint(1,9)
+    d = random.randint(1,9)
+    e = random.randint(1,9)
+    f = random.randint(1,9)
+    bar1 = hDEF[a] + hDEF[b] - aDEF[c]
+    check1 = RNG()
+    #check if Offensive LB can beat defense LB
+    if bar1 < check1:
+        return 0
+    else:
+        bar2 = qb[d] + qb[e] - aDEF[f]
+        check2 = RNG()
+        # check if QB can out play offensive LB
+        if bar2 < check2:
+            return 0
+        else:
+            return round((((1 - check1) + (1 - check2))*4))
+
+#outputs: 0 = caught 1 = missed 2 = intercepted
+def ThrowCheck(qb, wr, DEF):
+    a = random.randint(1,9)
+    b = random.randint(1,9)
+    c = random.randint(1,9)
+    d = random.randint(1,9)
+    e = random.randint(1,9)
+    f = random.randint(1,9)
+    g = random.randint(1,9)
+    h = random.randint(1,9)
+    #Check if throw makes it to target
+    bar1 = (qb[a] + qb[b]/2)
+    if bar1 < RNG():
+        #check if throw is caught
+        bar2 = wr[c] + wr[d] - DEF[e]
+        if bar2 < RNG():
+            return 0
+        else:
+            #check if interception
+            bar3 = DEF[f] + DEF[g] - (wr[h]/2)
+            if bar3 < RNG():
+                return 2
+            else: return 1
+    else: return 1
+
+# outputs: yards ran.
+def RunCheck(rb, DEF):
+    a = random.randint(1,9)
+    b = random.randint(1,9)
+    c = random.randint(1,9)
+    d = random.randint(1,9)
+    e = random.randint(1,9)
+    f = random.randint(1,9)
+    g = random.randint(1,9)
+    h = random.randint(1,9)
+    j = random.randint(1,9)
+    i = random.randint(1,9)
+    k = random.randint(1,9)
+    #check if run is stopeed before line of scrimage
+    bar1 = (rb[a] + rb[b]*2) - DEF[c]
+    if bar1 < RNG():
+        #check if run makes it 1-5 yards
+        bar2 = rb[d] + rb[e] - DEF[f]
+        if bar2 < RNG():
+            #check if run makes 5-15 yard
+            bar3 = (rb[g]*2) - DEF[h]
+            if bar3 < RNG():
+                #check if run makes 15-30 yards
+                bar4 = rb[i] - DEF[j]
+                if bar4 < RNG():
+                    #check if run makes it all da way
+                    bar5 = rb[k]/2
+                    if bar5 < RNG():
+                        return 100
+                else:
+                    return random.randint(15,30)
+            else: return random.randint(5,15)
+        else: return random.randint(0,5)
+    else: return random.randint(-5,-1)
+
+#outputs: 0 = miss & turnover 1 = made it.
+def KickCheck(qb, hDEF, aDEF, yards):
+    a = random.randint(1,9)
+    b = random.randint(1,9)
+    c = random.randint(1,9)
+    d = random.randint(1,9)
+    e = random.randint(1,9)
+    f = random.randint(1,9)
+    g = random.randint(1,9)
+    #check if fieldgoal is blocked
+    bar1 = hDEF[a] + hDEF[b] + hDEF[c] - aDEF[d]
+    check1= RNG()
+    if bar1 < check1:
+        #check if kick is good
+        bar2 = (qb[e] + qb[f] + qb[g] - (RNG()))
+        check2 = RNG()
+        if bar2 < check2:
+            return 1
+        else: 
+            return 0
+    else: 
+        return 0
 # alright, it's time to write down the soccer positions in here.
 #    AG   AM   MM   HM   HG
 # R  RAG  RAM  RMM  RHM  RHG
