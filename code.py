@@ -86,18 +86,11 @@ with open("teams.json","w") as make_teams:
 # NO ONE WILL BE ABLE TO FIGURE IT OUT
 # YES
 # I AM AMAZING
-# ALSO WHAT THE FUCK VC
-# anyway back to celebrating 
 
 i = 0
 while i < 37:
     RNG()
     i = i + 1
-
-# wait, new war 2?
-# the new war, thats been new for 5 years now?
-# the new war, that is no longer fucking new?!?!?!?!?
-# WAIT ALL PRIME STUFF IS OUT AGAIN? WHAT THE FUCK?
 
 #outputs 0 = not sacked other = how many yards sacked for.
 def SackCheck(qb, hDEF, aDEF):
@@ -142,7 +135,7 @@ def ThrowCheck(qb, wr, DEF):
             return 0
         else:
             #check if interception
-            bar3 = DEF[f] + DEF[g] - (WR[h]/2)
+            bar3 = DEF[f] + DEF[g] - (wr[h]/2)
             if bar3 < RNG():
                 return 2
             else: return 1
@@ -182,13 +175,6 @@ def RunCheck(rb, DEF):
             else: return random.randint(5,15)
         else: return random.randint(0,5)
     else: return random.randint(-5,-1)
-
-    
-
-    
-
-    
-    return yards
 
 #outputs: 0 = miss & turnover 1 = made it.
 def KickCheck(qb, hDEF, aDEF, yards):
