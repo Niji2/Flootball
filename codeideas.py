@@ -21,7 +21,7 @@ baseGame = {
     "teams": {1:None, 2:None},
     "owner": None,
     "Theif": None,
-    "score": {1:0, 2:0},
+    "score": None,
     "fSpot": 50,
     "downs": 1,
     "yrdsTofirst": 10
@@ -67,12 +67,14 @@ def StartGame():
     i = 0
     home = teams["Orono Juicers"]
     away = teams["Blue Badgers"]
-    for key in teams:
-        print(key)
-        i = i + 1
-        global currentGame
-        currentGame["teams"][i] = key
-    #now we set Owner and Theif
+    #so teams in the data being transfered between the 3 main functions is just the name of the teams  
+    #and score is set to their names.
+    yeet = teams.keys()
+    currentGame["teams"][1] = yeet[0]
+    currentGame["teams"][2] = yeet[1]
+    currentGame["score"][yeet[0]] = 0
+    currentGame["score"][yeet[1]] = 0
+    #now we set Owner and Theif 
     currentGame["owner"] = home
     currentGame["Theif"] = away
     #Finally we randomly set game type, int for football, string for soccer
@@ -84,7 +86,7 @@ def StartGame():
 
 # this first part acts as an adress book to the correct function for the play, wiht the specific plays shown down below.
 def UpdateGameState(teams, owner, theif, score, fspot, downs, yrdsToFirst):
-    if(type.downs == int ):
+    if(type.fspot == int):
         if(downs == 4 & random.randint(0,4) > 1):
             if(fspot > 51):
                 FGBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
@@ -116,7 +118,8 @@ def UpdateGameState(teams, owner, theif, score, fspot, downs, yrdsToFirst):
             else:
                 PassBall(teams, owner, theif, score, fspot, downs, yrdsToFirst)
             
-        
+    if(fspot <= 100 or fspot <= "G","G","G"):
+        Scoring()
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
 
@@ -332,10 +335,10 @@ def KickCheck(qb, hDEF, aDEF, yards):
     else: 
         return 0
 # alright, it's time to write down the soccer positions in here.
-#    AG   AM   MM   HM   HG
-# R  RAG  RAM  RMM  RHM  RHG
-# M  MAG  MAM  MMM  MHM  MHG
-# L  LAG  LAM  LMM  LHM  LHG
+#    OG   OM   MM   DM   DG
+# R  ROG  ROM  RMM  RDM  RDG
+# M  MOG  MOM  MMM  MDM  MDG
+# L  LOG  LOM  LMM  LDM  LDG
 # These are the 15 true states of sloccer. use these as you will
 # the ball can only move from the position its in the one of the surrounding positions normally. Goals can be kicked from that sides xM or xG positions, with a penalty 
 # if from the xM position, and also if not kicked from MxM/G
@@ -354,9 +357,24 @@ def DribbleBall(teams, owner, theif, score, fspot, downs, yrdsToFirst):
 def ShootGoal(teams, owner, theif, score, fspot, downs, yrdsToFirst):
     return teams, owner, theif, score, fspot, downs, yrdsToFirst
 
+def Scoring(teams, owner, score, fspot):
+    if(type.fspot == int):
+        if(random.rantint(1,100) > 50):
+            if(KickCheck() == 1):
+                score[owner] = score[owner] + 1
+        else:
+            if((random.rantint(1,100) > 50)):
+                if(ThrowCheck() > 10):
+                    score[owner] = score[owner] + 2
+            else:
+                if(RunCheck() > 10):
+                    score[owner] = score[owner] + 2
+    else:
+        score[owner] = score[owner] + 1
+    return(score)
 
-def ChangeGame(downs, fspot, teams, owner):
-    if(downs > 0):
+def ChangeGame(downs, fspot, teams, owner, theif, score):
+    if(type.fspot == int):
         downs = 1
         if(teams[1] == owner):
             if(fspot < 20):
@@ -380,6 +398,8 @@ def ChangeGame(downs, fspot, teams, owner):
                 fspot = 'M', 'H', 'M'
             else:
                 fspot = 'M', 'H', 'G'
+        score[owner] = score[owner] / 8
+        score[theif] = score[theif] / 8
     else:
         downs = 0
         if(teams[1] == owner):
@@ -397,7 +417,9 @@ def ChangeGame(downs, fspot, teams, owner):
             fspot = fspot + random.randint(0,10)
         else:
             fspot = fspot - random.randint(0,10)
-    return downs, fspot
+        score[owner] = score[owner] * 8
+        score[theif] = score[theif] * 8
+    return downs, fspot, score
 
 
 
